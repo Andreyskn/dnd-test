@@ -16,7 +16,7 @@ export default class Field extends React.Component<FieldProps, {}> {
 
 	returnToRoster = (playerId) => {
 		const { dispatch, players } = this.props;
-		const updatedPlayers = updateArray(players, playerId, { inRoster: true });
+		const updatedPlayers = updateArray.singleChange(players, playerId, { inRoster: true });
 		dispatch(actions.roster.returnPlayer(updatedPlayers));
 	}
 
@@ -33,13 +33,13 @@ export default class Field extends React.Component<FieldProps, {}> {
 		if (isSwapping) {
 			const swapTarget = positions[positionId].player
 			const swapSource = { id: playerData.id, name: playerData.name };
-			const updatedPositions = updateArray(positions, [positionId, playerData.position], [{ player: swapSource }, { player: swapTarget }]);
+			const updatedPositions = updateArray.multiChange(positions, [positionId, playerData.position], [{ player: swapSource }, { player: swapTarget }]);
 			return dispatch(actions.field.swapPlayers(updatedPositions));
 		}
 		if (isTaken && !isPutBack) this.returnToRoster(positions[positionId].player.id);
 		if (!isPutBack) {
 			const { id, name } = playerData;
-			const updatedPositions = updateArray(positions, positionId, { player: { id, name } });
+			const updatedPositions = updateArray.singleChange(positions, positionId, { player: { id, name } });
 			dispatch(actions.field.putPlayer(updatedPositions));
 		}
 	}
@@ -50,7 +50,7 @@ export default class Field extends React.Component<FieldProps, {}> {
 
 		if (outOfField) this.returnToRoster(playerId);
 		if (!isSwapping) {
-			const updatedPositions = updateArray(positions, positionId, { player: {} });
+			const updatedPositions = updateArray.singleChange(positions, positionId, { player: {} });
 
 			dispatch(actions.field.dropPlayer(updatedPositions));
 		}
