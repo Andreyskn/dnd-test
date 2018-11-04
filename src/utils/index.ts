@@ -2,11 +2,7 @@ interface IndexedType {
 	id: number
 }
 
-interface Obj {
-	[key: string]: any
-}
-
-export function updateArray<T extends IndexedType>(array: T[], compareWith: number | number[], changeSet: Obj | Obj[]): T[] {
+export function updateArray<T extends IndexedType>(array: T[], compareWith: number | number[], changeSet: { [K in keyof T]?: T[K] } | { [K in keyof T]?: T[K] }[]): T[] {
 	if (Array.isArray(compareWith)){
 		return array.map(element => {
 			for (let [index, value] of compareWith.entries()) {
