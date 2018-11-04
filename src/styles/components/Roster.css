@@ -1,0 +1,9 @@
+.base {
+	display: inline-flex;
+	flex-direction: column;
+	width: 400px;
+	max-height: 98vh;
+	padding-right: 2px;
+	flex-shrink: 0;
+	overflow: auto;
+}

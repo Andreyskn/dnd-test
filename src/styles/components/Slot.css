@@ -1,0 +1,11 @@
+.slot {
+	width: 25%;
+	height: 25%;
+	border: 1px solid gray;
+	box-sizing: border-box;
+	background-color: #6db46d;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+}
