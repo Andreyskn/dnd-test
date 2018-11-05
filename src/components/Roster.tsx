@@ -13,11 +13,11 @@ interface RosterProps {
 
 export default class Roster extends React.Component<RosterProps, {}> {
 
-	removePlayer = (playerId) => {
+	removePlayer = (playerId: number) => {
 		const { dispatch, players } = this.props;
 		const updatedPlayers = updateArray.singleChange(players, playerId, { inRoster: false });
 		
-		dispatch(actions.roster.removePlayer(updatedPlayers));
+		return dispatch(actions.roster.removePlayer(updatedPlayers));
 	}
 
 	render() {

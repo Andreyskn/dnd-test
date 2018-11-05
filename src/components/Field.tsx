@@ -5,6 +5,7 @@ import style from '../styles/components/Field'
 import { actions } from '../store/actions'
 import { updateArray } from '../utils'
 import { Position, Player } from '../store/reducer'
+import { PlayerData } from './Player'
 
 interface FieldProps {
 	dispatch: Dispatch,
@@ -14,13 +15,13 @@ interface FieldProps {
 
 export default class Field extends React.Component<FieldProps, {}> {
 
-	returnToRoster = (playerId) => {
+	returnToRoster = (playerId: number) => {
 		const { dispatch, players } = this.props;
 		const updatedPlayers = updateArray.singleChange(players, playerId, { inRoster: true });
-		dispatch(actions.roster.returnPlayer(updatedPlayers));
+		return dispatch(actions.roster.returnPlayer(updatedPlayers));
 	}
 
-	putPlayer = (positionId, playerData) => {
+	putPlayer = (positionId: number, playerData: PlayerData) => {
 		const { dispatch, positions } = this.props;
 		let isPutBack = false, isSwapping = false;
 		const isTaken = positions[positionId].player.id;
@@ -29,31 +30,29 @@ export default class Field extends React.Component<FieldProps, {}> {
 			isPutBack = positions[positionId].player.id === playerData.id;
 			isSwapping = !isPutBack && !!playerData.position;
 		}
-		
+		if (isPutBack) return;
 		if (isSwapping) {
 			const swapTarget = positions[positionId].player
 			const swapSource = { id: playerData.id, name: playerData.name };
 			const updatedPositions = updateArray.multiChange(positions, [positionId, playerData.position], [{ player: swapSource }, { player: swapTarget }]);
 			return dispatch(actions.field.swapPlayers(updatedPositions));
 		}
-		if (isTaken && !isPutBack) this.returnToRoster(positions[positionId].player.id);
-		if (!isPutBack) {
-			const { id, name } = playerData;
-			const updatedPositions = updateArray.singleChange(positions, positionId, { player: { id, name } });
-			dispatch(actions.field.putPlayer(updatedPositions));
-		}
+		if (isTaken) this.returnToRoster(positions[positionId].player.id);
+
+		const { id, name } = playerData;
+		const updatedPositions = updateArray.singleChange(positions, positionId, { player: { id, name } });
+		return dispatch(actions.field.putPlayer(updatedPositions));
 	}
 
-	dropPlayer = (playerId, positionId, outOfField) => {
+	dropPlayer = (playerId: number, positionId: number, outOfField: boolean) => {
 		const { dispatch, positions } = this.props;
-		const isSwapping = positions[positionId].player.id !== playerId;
+		const isSwapping = positions[positionId].player.id !== playerId; // ?
 
+		if (isSwapping) return;
 		if (outOfField) this.returnToRoster(playerId);
-		if (!isSwapping) {
-			const updatedPositions = updateArray.singleChange(positions, positionId, { player: {} });
 
-			dispatch(actions.field.dropPlayer(updatedPositions));
-		}
+		const updatedPositions = updateArray.singleChange(positions, positionId, { player: {} });
+		return dispatch(actions.field.dropPlayer(updatedPositions));
 	}
 
 	render() {

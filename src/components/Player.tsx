@@ -14,8 +14,14 @@ interface DragDropProps {
 	connectDragSource?: ConnectDragSource
 }
 
+export interface PlayerData {
+	id: number,
+	name: string,
+	position: number | undefined,
+}
+
 const dragSourceSpec = {
-	beginDrag(props: PlayerProps) {
+	beginDrag(props: PlayerProps): PlayerData {
 		return {
 			id: props.id,
 			name: props.name,
